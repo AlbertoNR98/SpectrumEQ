@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="aBrbYu" name="SpectrumEQ" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="0" jucerFormatVersion="1"
               pluginManufacturerCode="ZeUS" pluginVST3Category="EQ" cppLanguageStandard="17">
   <MAINGROUP id="VxHZuz" name="SpectrumEQ">
     <GROUP id="{637712AF-DD2B-10C2-BB48-3259EF6DC054}" name="Source">
