@@ -1,0 +1,4 @@
+## Ignore JUCE files (it will created automatically after opening SpectrumEQ.jucer)
+
+**/Builds
+**/JuceLibraryCode
