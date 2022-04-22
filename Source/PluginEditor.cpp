@@ -96,7 +96,7 @@ void SpectrumEQAudioProcessorEditor::paint(juce::Graphics& g)
 
     responseCurve.startNewSubPath(responseArea.getX(), map(mags.front()));
 
-    for (size_t i = i; i < mags.size(); ++i)
+    for (size_t i = 1; i < mags.size(); ++i)
     {
         responseCurve.lineTo(responseArea.getX() + i, map(mags[i]));
     }
