@@ -71,6 +71,7 @@ struct ResponseCurveComponent : juce::Component,
     virtual void timerCallback() override;
 
     void paint(juce::Graphics& g) override;
+    void resized() override;
 
 private:
     SpectrumEQAudioProcessor& audioProcessor;
@@ -79,6 +80,12 @@ private:
     MonoChain monoChain;
 
     void updateChain();
+
+    juce::Image background;
+
+    juce::Rectangle<int> getRenderArea();
+
+    juce::Rectangle<int> getAnalysisArea();
 };
 
 //==============================================================================
