@@ -319,6 +319,24 @@ SpectrumEQAudioProcessorEditor::SpectrumEQAudioProcessorEditor (SpectrumEQAudioP
     peakFreqSlider.labels.add({ 0.f, "20 Hz" });
     peakFreqSlider.labels.add({ 1.f, "20 kHz" });
 
+    peakGainSlider.labels.add({ 0.f, "-24 dB" });
+    peakGainSlider.labels.add({ 1.f, "+24 dB" });
+
+    peakQualitySlider.labels.add({ 0.f, "0.1" });
+    peakQualitySlider.labels.add({ 1.f, "10.0" });
+
+    lowCutFreqSlider.labels.add({ 0.f, "20 Hz" });
+    lowCutFreqSlider.labels.add({ 1.f, "20 kHz" });
+
+    highCutFreqSlider.labels.add({ 0.f, "20 Hz" });
+    highCutFreqSlider.labels.add({ 1.f, "20 kHz" });
+
+    lowCutSlopeSlider.labels.add({ 0.0f, "12" });
+    lowCutSlopeSlider.labels.add({ 1.f, "48" });
+
+    highCutSlopeSlider.labels.add({ 0.0f, "12" });
+    highCutSlopeSlider.labels.add({ 1.f, "48" });
+
     for (auto* comp : getComps())
     {
         addAndMakeVisible(comp);
