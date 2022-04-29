@@ -29,7 +29,7 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
     g.setColour(enabled ? Colour(86u, 191u, 240u) : Colours::darkgrey);
     g.fillEllipse(bounds);
 
-    //g.setColour(Colour(255u, 154u, 1u));    // Orange
+    //g.setColour(Colour(255u, 154u, 1u)); // Orange
     g.setColour(enabled ? Colour(94u, 86u, 240u) : Colours::grey);
     g.drawEllipse(bounds, 1.f);
 
@@ -89,6 +89,7 @@ void LookAndFeel::drawToggleButton(juce::Graphics& g,
         g.setColour(Colours::red);
         g.drawRect(bounds);
         */
+
         auto size = jmin(bounds.getWidth(), bounds.getHeight()) - 6;
         auto r = bounds.withSizeKeepingCentre(size, size).toFloat();
 
@@ -127,6 +128,7 @@ void LookAndFeel::drawToggleButton(juce::Graphics& g,
         g.strokePath(analyzerButton->randomPath, PathStrokeType(1.f));
     }
 }
+
 //==============================================================================
 void RotarySliderWithLabels::paint(juce::Graphics& g)
 {
@@ -372,7 +374,6 @@ void ResponseCurveComponent::paint(juce::Graphics& g)
 
     g.setColour(Colours::orange);
     g.drawRoundedRectangle(getRenderArea().toFloat(), 4.f, 1.f);
-
 }
 
 std::vector<float> ResponseCurveComponent::getFrequencies()
@@ -380,9 +381,9 @@ std::vector<float> ResponseCurveComponent::getFrequencies()
     return std::vector<float>
     {
         20, /*30, 40,*/ 50, 100,
-            200, /*300, 400,*/ 500, 1000,
-            2000, /*3000, 4000,*/ 5000, 10000,
-            20000
+        200, /*300, 400,*/ 500, 1000,
+        2000, /*3000, 4000,*/ 5000, 10000,
+        20000
     };
 }
 
@@ -526,45 +527,6 @@ void ResponseCurveComponent::parameterValueChanged(int parameterIndex, float new
     parametersChanged.set(true);
 }
 
-void PathProducer::process(juce::Rectangle<float> fftBounds, double sampleRate)
-{
-    juce::AudioBuffer<float> tempIncomingBuffer;
-    while (leftChannelFifo->getNumCompleteBuffersAvailable() > 0)
-    {
-        if (leftChannelFifo->getAudioBuffer(tempIncomingBuffer))
-        {
-            auto size = tempIncomingBuffer.getNumSamples();
-
-            juce::FloatVectorOperations::copy(monoBuffer.getWritePointer(0, 0),
-                                              monoBuffer.getReadPointer(0, size),
-                                              monoBuffer.getNumSamples() - size);
-
-            juce::FloatVectorOperations::copy(monoBuffer.getWritePointer(0, monoBuffer.getNumSamples() - size),
-                                              tempIncomingBuffer.getReadPointer(0, 0),
-                                              size);
-
-            leftChannelFFTDataGenerator.produceFFTDataForRendering(monoBuffer, -48.f);
-           }
-    }
-
-    const auto fftSize = leftChannelFFTDataGenerator.getFFTSize();
-    const auto binWidth = sampleRate / double(fftSize);
-
-    while (leftChannelFFTDataGenerator.getNumAvailableFFTDataBlocks() > 0)
-    {
-        std::vector<float> fftData;
-        if (leftChannelFFTDataGenerator.getFFTData(fftData))
-        {
-            pathProducer.generatePath(fftData, fftBounds, fftSize, binWidth, -48.f);
-        }
-    }
-
-    while (pathProducer.getNumPathsAvailable() > 0)
-    {
-        pathProducer.getPath(leftChannelFFTPath);
-    }
-}
-
 void ResponseCurveComponent::timerCallback()
 {
     if (shouldShowFFTAnalysis)
@@ -629,8 +591,48 @@ juce::Rectangle<int> ResponseCurveComponent::getAnalysisArea()
 }
 
 //==============================================================================
-SpectrumEQAudioProcessorEditor::SpectrumEQAudioProcessorEditor (SpectrumEQAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), 
+void PathProducer::process(juce::Rectangle<float> fftBounds, double sampleRate)
+{
+    juce::AudioBuffer<float> tempIncomingBuffer;
+    while (leftChannelFifo->getNumCompleteBuffersAvailable() > 0)
+    {
+        if (leftChannelFifo->getAudioBuffer(tempIncomingBuffer))
+        {
+            auto size = tempIncomingBuffer.getNumSamples();
+
+            juce::FloatVectorOperations::copy(monoBuffer.getWritePointer(0, 0),
+                monoBuffer.getReadPointer(0, size),
+                monoBuffer.getNumSamples() - size);
+
+            juce::FloatVectorOperations::copy(monoBuffer.getWritePointer(0, monoBuffer.getNumSamples() - size),
+                tempIncomingBuffer.getReadPointer(0, 0),
+                size);
+
+            leftChannelFFTDataGenerator.produceFFTDataForRendering(monoBuffer, -48.f);
+        }
+    }
+
+    const auto fftSize = leftChannelFFTDataGenerator.getFFTSize();
+    const auto binWidth = sampleRate / double(fftSize);
+
+    while (leftChannelFFTDataGenerator.getNumAvailableFFTDataBlocks() > 0)
+    {
+        std::vector<float> fftData;
+        if (leftChannelFFTDataGenerator.getFFTData(fftData))
+        {
+            pathProducer.generatePath(fftData, fftBounds, fftSize, binWidth, -48.f);
+        }
+    }
+
+    while (pathProducer.getNumPathsAvailable() > 0)
+    {
+        pathProducer.getPath(leftChannelFFTPath);
+    }
+}
+
+//==============================================================================
+SpectrumEQAudioProcessorEditor::SpectrumEQAudioProcessorEditor (SpectrumEQAudioProcessor& p) : 
+      AudioProcessorEditor (&p), audioProcessor (p), 
 
       peakFreqSlider(*audioProcessor.apvts.getParameter("Peak Freq"), "Hz"),
       peakGainSlider(*audioProcessor.apvts.getParameter("Peak Gain"), "dB"),
@@ -654,9 +656,6 @@ SpectrumEQAudioProcessorEditor::SpectrumEQAudioProcessorEditor (SpectrumEQAudioP
       highcutBypassButtonAttachment(audioProcessor.apvts, "HighCut Bypassed", highcutBypassButton),
       analyzerEnabledButtonAttachment(audioProcessor.apvts, "Analyzer Enabled", analyzerEnabledButton)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-
     peakFreqSlider.labels.add({ 0.f, "20 Hz" });
     peakFreqSlider.labels.add({ 1.f, "20 kHz" });
 

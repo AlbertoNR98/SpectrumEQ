@@ -18,6 +18,7 @@ struct Fifo
     {
         static_assert(std::is_same_v<T, juce::AudioBuffer<float>>,
             "prepare(numChannels, numSamples) should only be used when the Fifo is holding juce::AudioBuffer<float>");
+
         for (auto& buffer : buffers)
         {
             buffer.setSize(numChannels,
@@ -33,6 +34,7 @@ struct Fifo
     {
         static_assert(std::is_same_v<T, std::vector<float>>,
             "prepare(numElements) should only be used when the Fifo is holding std::vector<float>");
+
         for (auto& buffer : buffers)
         {
             buffer.clear();
@@ -68,6 +70,7 @@ struct Fifo
     {
         return fifo.getNumReady();
     }
+
 private:
     static constexpr int Capacity = 30;
     std::array<T, Capacity> buffers;
@@ -92,6 +95,7 @@ struct SingleChannelSampleFifo
     {
         jassert(prepared.get());
         jassert(buffer.getNumChannels() > channelToUse);
+
         auto* channelPtr = buffer.getReadPointer(channelToUse);
 
         for (int i = 0; i < buffer.getNumSamples(); ++i)
@@ -120,6 +124,7 @@ struct SingleChannelSampleFifo
     int getSize() const { return size.get(); }
     //==============================================================================
     bool getAudioBuffer(BlockType& buf) { return audioBufferFifo.pull(buf); }
+
 private:
     Channel channelToUse;
     int fifoIndex = 0;
@@ -223,8 +228,8 @@ void updateCutFilter(ChainType& chain,
 inline auto makeLowCutFilter(const ChainSettings& chainSettings, double sampleRate)
 {
     return juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(chainSettings.lowCutFreq,
-                                                                                        sampleRate,
-                                                                                        2 * (chainSettings.lowCutSlope + 1));
+                                                                                       sampleRate,
+                                                                                       2 * (chainSettings.lowCutSlope + 1));
 }
 
 inline auto makeHighCutFilter(const ChainSettings& chainSettings, double sampleRate)
@@ -237,7 +242,7 @@ inline auto makeHighCutFilter(const ChainSettings& chainSettings, double sampleR
 //==============================================================================
 /**
 */
-class SpectrumEQAudioProcessor  : public juce::AudioProcessor
+class SpectrumEQAudioProcessor : public juce::AudioProcessor
 {
 public:
     //==============================================================================

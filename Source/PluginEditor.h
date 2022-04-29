@@ -86,6 +86,7 @@ struct FFTDataGenerator
     int getNumAvailableFFTDataBlocks() const { return fftDataFifo.getNumAvailableForReading(); }
     //==============================================================================
     bool getFFTData(BlockType& fftData) { return fftDataFifo.pull(fftData); }
+
 private:
     FFTOrder order;
     BlockType fftData;
@@ -157,6 +158,7 @@ struct AnalyzerPathGenerator
     {
         return pathFifo.pull(path);
     }
+
 private:
     Fifo<PathType> pathFifo;
 };
@@ -178,11 +180,11 @@ struct LookAndFeel : juce::LookAndFeel_V4
 
 struct RotarySliderWithLabels : juce::Slider
 {
-    RotarySliderWithLabels(juce::RangedAudioParameter& rap, const juce::String& unitSuffix)
-        : juce::Slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
-                     juce::Slider::TextEntryBoxPosition::NoTextBox),
-          param(&rap),
-          suffix(unitSuffix)
+    RotarySliderWithLabels(juce::RangedAudioParameter& rap, const juce::String& unitSuffix) :
+        juce::Slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
+        juce::Slider::TextEntryBoxPosition::NoTextBox),
+        param(&rap),
+        suffix(unitSuffix)
     {
         setLookAndFeel(&lnf);
     }
@@ -214,14 +216,14 @@ private:
 
 struct PathProducer
 {
-    PathProducer(SingleChannelSampleFifo<SpectrumEQAudioProcessor::BlockType>& scsf) :
-        leftChannelFifo(&scsf)
+    PathProducer(SingleChannelSampleFifo<SpectrumEQAudioProcessor::BlockType>& scsf) : leftChannelFifo(&scsf)
     {
         leftChannelFFTDataGenerator.changeOrder(FFTOrder::order2048);
         monoBuffer.setSize(1, leftChannelFFTDataGenerator.getFFTSize());
     }
     void process(juce::Rectangle<float> fftBounds, double sampleRate);
     juce::Path getPath() { return leftChannelFFTPath; };
+
 private:
     SingleChannelSampleFifo<SpectrumEQAudioProcessor::BlockType>* leftChannelFifo;
 
@@ -234,7 +236,8 @@ private:
     juce::Path leftChannelFFTPath;
 };
 
-struct ResponseCurveComponent : juce::Component,
+struct ResponseCurveComponent : 
+    juce::Component,
     juce::AudioProcessorParameter::Listener,
     juce::Timer
 {
@@ -327,12 +330,12 @@ private:
     SpectrumEQAudioProcessor& audioProcessor;
 
     RotarySliderWithLabels peakFreqSlider, 
-                       peakGainSlider, 
-                       peakQualitySlider,
-                       lowCutFreqSlider,
-                       highCutFreqSlider, 
-                       lowCutSlopeSlider,
-                       highCutSlopeSlider;
+                           peakGainSlider, 
+                           peakQualitySlider,
+                           lowCutFreqSlider,
+                           highCutFreqSlider, 
+                           lowCutSlopeSlider,
+                           highCutSlopeSlider;
 
     std::vector<juce::Component*> getComps();
 
