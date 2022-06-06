@@ -159,12 +159,16 @@ enum Slope
 
 struct ChainSettings
 {
-    float peakFreq{ 0 }, peakGainInDecibels{ 0 }, peakQuality{ 1.f };
+    float lowPeakFreq{ 0 }, lowPeakGainInDecibels{ 0 }, lowPeakQuality{ 1.f };
+    float lowMidPeakFreq{ 0 }, lowMidPeakGainInDecibels{ 0 }, lowMidPeakQuality{ 1.f };
+    float highMidPeakFreq{ 0 }, highMidPeakGainInDecibels{ 0 }, highMidPeakQuality{ 1.f };
+    float highPeakFreq{ 0 }, highPeakGainInDecibels{ 0 }, highPeakQuality{ 1.f };
     float lowCutFreq{ 0 }, highCutFreq{ 0 };
     
     Slope lowCutSlope{ Slope::Slope_12 }, highCutSlope{ Slope::Slope_12 };
 
-    bool lowCutBypassed{ false }, peakBypassed{ false }, highCutBypassed{ false };
+    bool lowCutBypassed{ false }, lowPeakBypassed{ false }, lowMidPeakBypassed{ false }, 
+        highMidPeakBypassed{ false }, highPeakBypassed{ false }, highCutBypassed{ false };
 };
 
 ChainSettings getChainSettings(juce::AudioProcessorValueTreeState& apvts);
@@ -173,19 +177,25 @@ using Filter = juce::dsp::IIR::Filter<float>;
 
 using CutFilter = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>;
 
-using MonoChain = juce::dsp::ProcessorChain<CutFilter, Filter, CutFilter>;
+using MonoChain = juce::dsp::ProcessorChain<CutFilter, Filter, Filter, Filter, Filter, CutFilter>;
 
 enum ChainPositions
 {
     LowCut,
-    Peak,
+    LowPeak,
+    LowMidPeak,
+    HighMidPeak,
+    HighPeak,
     HighCut
 };
 
 using Coefficients = Filter::CoefficientsPtr;
 void updateCoefficients(Coefficients& old, const Coefficients& replacements);
 
-Coefficients makePeakFilter(const ChainSettings& chainSettings, double sampleRate);
+Coefficients makeLowPeakFilter(const ChainSettings& chainSettings, double sampleRate);
+Coefficients makeLowMidPeakFilter(const ChainSettings& chainSettings, double sampleRate);
+Coefficients makeHighMidPeakFilter(const ChainSettings& chainSettings, double sampleRate);
+Coefficients makeHighPeakFilter(const ChainSettings& chainSettings, double sampleRate);
 
 template<int Index, typename ChainType, typename CoefficientType>
 void update(ChainType& chain, const CoefficientType& coefficients)
@@ -292,7 +302,10 @@ public:
 private:
     MonoChain leftChain, rightChain;
 
-    void updatePeakFilter(const ChainSettings& chainSettings);
+    void updateLowPeakFilter(const ChainSettings& chainSettings);
+    void updateLowMidPeakFilter(const ChainSettings& chainSettings);
+    void updateHighMidPeakFilter(const ChainSettings& chainSettings);
+    void updateHighPeakFilter(const ChainSettings& chainSettings);
     void updateLowCutFilters(const ChainSettings& chainSettings);
     void updateHighCutFilters(const ChainSettings& chainSettings);
 
