@@ -329,9 +329,22 @@ private:
     // access the processor object that created it.
     SpectrumEQAudioProcessor& audioProcessor;
 
-    RotarySliderWithLabels peakFreqSlider, 
-                           peakGainSlider, 
-                           peakQualitySlider,
+    RotarySliderWithLabels lowPeakFreqSlider, 
+                           lowPeakGainSlider, 
+                           lowPeakQualitySlider,
+
+                           lowMidPeakFreqSlider,
+                           lowMidPeakGainSlider,
+                           lowMidPeakQualitySlider,
+
+                           highMidPeakFreqSlider,
+                           highMidPeakGainSlider,
+                           highMidPeakQualitySlider,
+
+                           highPeakFreqSlider,
+                           highPeakGainSlider,
+                           highPeakQualitySlider,
+
                            lowCutFreqSlider,
                            highCutFreqSlider, 
                            lowCutSlopeSlider,
@@ -344,20 +357,36 @@ private:
     using APVTS = juce::AudioProcessorValueTreeState;
     using Attachment = APVTS::SliderAttachment;
 
-    Attachment peakFreqSliderAttachment,
-               peakGainSliderAttachment,
-               peakQualitySliderAttachment,
+    Attachment lowPeakFreqSliderAttachment,
+               lowPeakGainSliderAttachment,
+               lowPeakQualitySliderAttachment,
+
+               lowMidPeakFreqSliderAttachment,
+               lowMidPeakGainSliderAttachment,
+               lowMidPeakQualitySliderAttachment,
+
+               highMidPeakFreqSliderAttachment,
+               highMidPeakGainSliderAttachment,
+               highMidPeakQualitySliderAttachment,
+
+               highPeakFreqSliderAttachment,
+               highPeakGainSliderAttachment,
+               highPeakQualitySliderAttachment,
+
                lowCutFreqSliderAttachment,
                highCutFreqSliderAttachment,
                lowCutSlopeSliderAttachment,
                highCutSlopeSliderAttachment;
 
-    PowerButton lowcutBypassButton, peakBypassButton, highcutBypassButton; 
+    PowerButton lowcutBypassButton, lowPeakBypassButton, lowMidPeakBypassButton, highMidPeakBypassButton, highPeakBypassButton, highcutBypassButton; 
     AnalyzerButton analyzerEnabledButton;
 
     using ButtonAttachment = APVTS::ButtonAttachment;
     ButtonAttachment lowcutBypassButtonAttachment, 
-                     peakBypassButtonAttachment,
+                     lowPeakBypassButtonAttachment,
+                     lowMidPeakBypassButtonAttachment,
+                     highMidPeakBypassButtonAttachment,
+                     highPeakBypassButtonAttachment,
                      highcutBypassButtonAttachment,
                      analyzerEnabledButtonAttachment;
 
