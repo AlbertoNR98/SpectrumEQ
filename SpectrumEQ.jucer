@@ -4,7 +4,8 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="0" jucerFormatVersion="1"
               pluginManufacturerCode="ARSA" pluginVST3Category="Analyzer,EQ"
               cppLanguageStandard="17" pluginManufacturer="ARSA" pluginCode="Arsa"
-              aaxIdentifier="com.ARSA.SpectrumEQ" bundleIdentifier="com.ARSA.SpectrumEQ">
+              aaxIdentifier="com.ARSA.SpectrumEQ" bundleIdentifier="com.ARSA.SpectrumEQ"
+              pluginFormats="buildAU,buildLV2,buildStandalone,buildVST3">
   <MAINGROUP id="VxHZuz" name="SpectrumEQ">
     <GROUP id="{637712AF-DD2B-10C2-BB48-3259EF6DC054}" name="Source">
       <FILE id="V87zdg" name="PluginProcessor.cpp" compile="1" resource="0"
